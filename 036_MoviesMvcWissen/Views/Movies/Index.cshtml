@@ -1,0 +1,44 @@
+﻿@model  List<_036_MoviesMvcWissen.Entities.Movie>
+@{
+    ViewBag.Title = "Movies";
+}
+<br />
+<h3><i>@ViewBag.Title</i></h3>
+
+<a href="~/Movies/Add">Add Movie</a>
+<br />
+
+
+<table class="table">
+    <tr>
+        <td colspan="3" style="color:red; text-align:right;">@Model.Count Records Found</td>
+    </tr>
+    <tr>
+        <td>
+            <b>Name</b>
+        </td>
+        <td>
+            <b>Production Year</b>
+        </td>
+        <td>
+            <b>Box Office Return</b>
+        </td>
+    </tr>
+    @foreach(var movie in Model)
+        {
+            <tr>
+                <td>
+                    @movie.Name
+                </td>
+                <td>
+                    @movie.ProductionYear
+                </td>
+                <td>
+                    @movie.BoxOfficeReturn
+                </td>
+            </tr>
+        }
+ 
+    
+</table>
+
