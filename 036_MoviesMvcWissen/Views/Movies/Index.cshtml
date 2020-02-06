@@ -8,12 +8,14 @@
 <a href="~/Movies/Add">Add Movie</a>
 <br />
 
+<label class="text-success">@TempData["Info"]</label>
 
 <table class="table">
     <tr>
-        <td colspan="3" style="color:red; text-align:right;">@Model.Count Records Found</td>
+        <td colspan="4" style="color:red; text-align:right;">@ViewData["count"] records found @*@Model.Count Records Found*@</td>
     </tr>
     <tr>
+
         <td>
             <b>Name</b>
         </td>
@@ -27,6 +29,10 @@
     @foreach(var movie in Model)
         {
             <tr>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = movie.Id })
+                    @Html.ActionLink("Delete", "Delete", new { id = movie.Id })
+                </td>
                 <td>
                     @movie.Name
                 </td>

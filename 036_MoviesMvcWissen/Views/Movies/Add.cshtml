@@ -4,7 +4,9 @@
 }
 
 <h2>@ViewBag.Title</h2>
-
+<p style="color: #57a13e">
+    @ViewBag.Message
+</p>
 <form action="~/Movies/Add" method="post">
     <div class="form-group">
         <label for="tbName">Name</label>
@@ -12,9 +14,16 @@
 
     </div>
     <div class="form-group">
-        <label for="tbProductionYear">Production Year</label>
-        <input type="text" class="form-control" id="tbProductionYear" name="ProductionYear" />
+        <label for="ddltbProductionYear">Production Year</label>
+        <select id="ddlProductionYear" name="ProductionYear" class="form-control">
+            @for (int i = 1000; i <= DateTime.Now.Year; i++)
+            {
+                <option value="@i" selected>@i</option>
+                
+            }
 
+          
+        </select>
     </div>
     <div class="form-group">
         <label for="tbBoxOfficeReturn">BoxOfficeReturn</label>
