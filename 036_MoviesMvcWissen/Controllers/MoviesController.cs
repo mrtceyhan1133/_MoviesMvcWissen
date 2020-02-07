@@ -66,7 +66,7 @@ namespace _036_MoviesMvcWissen.Controllers
             };
             db.Movies.Add(entity);
             db.SaveChanges();
-            TempData["Info"] = "Record successfully saved to database.";
+            TempData["Info"] = "Record successfully added to database.";
             return RedirectToAction("Index");
         }
 
@@ -96,6 +96,7 @@ namespace _036_MoviesMvcWissen.Controllers
             entity.BoxOfficeReturn = Convert.ToDouble(BoxOfficeReturn.Replace(",","."),CultureInfo.InvariantCulture);
             db.Entry(entity).State = EntityState.Modified;
             db.SaveChanges();
+            TempData["Info"] = "Record successfully updated in database.";
             return RedirectToRoute(new { controller = "Movies", action = "Index" });
 
         }
@@ -114,7 +115,21 @@ namespace _036_MoviesMvcWissen.Controllers
             var entity = db.Movies.Find(id);
             db.Movies.Remove(entity);
             db.SaveChanges();
+            TempData["Info"] = "Record successfully deleted from database.";
             return RedirectToAction("Index");
+        }
+        public ActionResult Details(int? id)
+        {
+            if (!id.HasValue)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Id is required!");
+            var model = db.Movies.Find(id.Value);
+            return View(model);
+        }
+        public ActionResult Welcome()
+        {
+            var result = "Welcome to Movies MVC";
+            //return Content(result);
+            return PartialView("_Welcome",result);
         }
     }
 }

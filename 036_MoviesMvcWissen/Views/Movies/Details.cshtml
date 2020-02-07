@@ -1,0 +1,14 @@
+﻿@model Movie
+@{
+    ViewBag.Title = "Movie Details";
+}
+
+<h2>ViewBag.Title</h2>
+@*@Html.Partial("_Details",Model)*@
+@{ 
+    Html.RenderPartial("_Details", Model); /*Daha Performanslı(text writerı kullandıgı için)*/
+}
+
+<br />
+@Html.ActionLink("Back to Movies","Index")
+

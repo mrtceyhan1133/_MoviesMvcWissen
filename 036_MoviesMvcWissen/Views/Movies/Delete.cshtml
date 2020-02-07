@@ -4,26 +4,33 @@
 }
 
 <h2>@ViewBag.Title</h2>
-
+@Html.Partial("_Details",Model)
 @using (Html.BeginForm("Delete", "Movies", FormMethod.Post))
 {
-    @Html.HiddenFor(e=>e.Id)
-    @*@Html.DisplayForModel()*@
+    @Html.HiddenFor(e => e.Id)
+    <button type="submit" class="btn btn-success">Yes</button>
+    @:&nbsp;
+    @Html.ActionLink("No", "Index", null, htmlAttributes: new { @class = "btn btn-danger" })
+}
+
+
+@*@using (Html.BeginForm("Delete", "Movies", FormMethod.Post))
+{
+    @Html.HiddenFor(e => e.Id)
+    //@Html.DisplayForModel()
     <div class="form-group">
         <b>@Html.DisplayNameFor(e => e.Name)</b>
-        @Html.DisplayFor(e=>e.Name)
+        @Html.DisplayFor(e => e.Name)
     </div>
     <div class="form-group">
-       <b> @Html.LabelFor(e => e.BoxOfficeReturn)</b>
-        @Html.DisplayFor(e=>e.BoxOfficeReturn)
+        <b> @Html.LabelFor(e => e.BoxOfficeReturn)</b>
+        @Html.DisplayFor(e => e.BoxOfficeReturn)
     </div>
     <div class="form-group">
-       <b> @Html.DisplayNameFor(e => e.ProductionYear)</b>
+        <b> @Html.DisplayNameFor(e => e.ProductionYear)</b>
         @Html.DisplayFor(e => e.ProductionYear)
     </div>
-    
-
-<button type="submit" class="btn btn-success">Yes</button>
-@:&nbsp;
-@Html.ActionLink("No","Index",null,htmlAttributes:new { @class="btn btn-danger" } )
-}
+    <button type="submit" class="btn btn-success">Yes</button>
+    @:&nbsp;
+    @Html.ActionLink("No", "Index", null, htmlAttributes: new { @class = "btn btn-danger" })
+}*@

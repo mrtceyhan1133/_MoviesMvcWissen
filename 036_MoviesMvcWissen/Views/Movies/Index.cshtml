@@ -3,10 +3,14 @@
     ViewBag.Title = "Movies";
 }
 <br />
+@*@Html.Action("Welcome")*@
+@{
+    Html.RenderAction("Welcome");
+}
+<br />
 <h3><i>@ViewBag.Title</i></h3>
 
 <a href="~/Movies/Add">Add Movie</a>
-<br />
 
 <label class="text-success">@TempData["Info"]</label>
 
@@ -26,25 +30,28 @@
             <b>Box Office Return</b>
         </td>
     </tr>
-    @foreach(var movie in Model)
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = movie.Id })
-                    @Html.ActionLink("Delete", "Delete", new { id = movie.Id })
-                </td>
-                <td>
-                    @movie.Name
-                </td>
-                <td>
-                    @movie.ProductionYear
-                </td>
-                <td>
-                    @movie.BoxOfficeReturn
-                </td>
-            </tr>
-        }
- 
-    
+    @foreach (var movie in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(" ", "Details", new { id = movie.Id }, new { @class = "fa fa-info text-warning" })
+                &nbsp;
+                @Html.ActionLink(" ", "Edit", new { id = movie.Id }, new { @class = "fa fa-pencil-square-o text-success" })
+                &nbsp;
+                @Html.ActionLink(" ", "Delete", new { id = movie.Id }, new { @class = "fa fa-trash text-danger" })
+            </td>
+            <td>
+                @movie.Name
+            </td>
+            <td>
+                @movie.ProductionYear
+            </td>
+            <td>
+                @movie.BoxOfficeReturn
+            </td>
+        </tr>
+    }
+
+
 </table>
 
