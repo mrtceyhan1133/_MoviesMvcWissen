@@ -2,6 +2,14 @@
 
 @{
     ViewBag.Title = "Delete";
+    var movieDirectors = Model.MovieDirectors;
+    var movies = "";
+
+    foreach (var movieDirector in movieDirectors)
+    {
+        movies += movieDirector.Movie.Name + ", ";
+    }
+    movies = movies.Trim(',', ' ');
 }
 
 <h2>Delete</h2>
@@ -33,6 +41,13 @@
 
         <dd>
             @Html.DisplayFor(model => model.Retired)
+        </dd>
+        <dt>
+            @Html.Label("Movies")
+        </dt>
+
+        <dd>
+            @movies
         </dd>
 
     </dl>
