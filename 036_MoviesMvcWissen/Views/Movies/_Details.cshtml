@@ -10,7 +10,7 @@
     }
     directorFullNames = directorFullNames.Trim(',', ' ');
 }
-<div class="row">
+@*<div class="row">
     <div class="col-md-2">
         <b>@Html.DisplayNameFor(e => e.Name):</b>
         
@@ -34,7 +34,8 @@
     <div class="col-md-10">
         @Html.DisplayFor(e => e.ProductionYear)
     </div>
-</div>
+</div>*@
+@Html.DisplayForModel()
 <div class="row">
     <div class="col-md-2">
         <b> @Html.Label("Directors","Directors:")</b>

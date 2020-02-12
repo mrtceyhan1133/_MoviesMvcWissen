@@ -53,6 +53,59 @@ namespace _036_MoviesMvcWissen.Controllers
             moviesIndexViewModel.Years = new SelectList(years, "Value", "Text", moviesIndexViewModel.YearId);
             return View(moviesIndexViewModel);
         }
+
+        public ActionResult List(MoviesIndexViewModel moviesIndexViewModel)
+        {
+            if(moviesIndexViewModel == null)
+            {
+                moviesIndexViewModel = new MoviesIndexViewModel();
+            }
+
+            var movies = db.Movies.AsQueryable();
+            if(!String.IsNullOrWhiteSpace(moviesIndexViewModel.Name))
+            {
+                movies = movies.Where(e => e.Name.Contains(moviesIndexViewModel.Name));
+            }
+
+            moviesIndexViewModel.Movies = movies.ToList();
+            var years = new List<SelectListItem>();
+            for(int i = DateTime.Now.Year;i>=2000;i--)
+            {
+                years.Add(new SelectListItem()
+                {
+                    Value = i.ToString(),
+                    Text = i.ToString()
+                });
+            }
+            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.YearId))
+                movies = movies.Where(e => e.ProductionYear == moviesIndexViewModel.YearId);
+
+            if(!String.IsNullOrWhiteSpace(moviesIndexViewModel.Min))
+            {
+                double minValue = 0;
+                if(Double.TryParse(moviesIndexViewModel.Min.Replace(',','.'),out minValue))
+                {
+                    movies = movies.Where(e => e.BoxOfficeReturn >= minValue);
+                }
+                
+            }
+            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Min))
+            {
+                double maxValue = 0;
+                if (Double.TryParse(moviesIndexViewModel.Max.Replace(',', '.'), out maxValue))
+                {
+                    movies = movies.Where(e => e.BoxOfficeReturn >= maxValue);
+                }
+
+            }
+
+
+            moviesIndexViewModel.Movies = movies.ToList();
+
+            moviesIndexViewModel.Years = new SelectList(years, "Value", "Text",moviesIndexViewModel.YearId);
+            return View(moviesIndexViewModel);
+        }
+
         [NonAction]
         public List<Movie> GetList(bool removeSession = true)
         {
