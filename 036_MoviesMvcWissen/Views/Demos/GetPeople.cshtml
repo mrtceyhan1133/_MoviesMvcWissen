@@ -1,4 +1,4 @@
-﻿@model IEnumerable<_036_MoviesMvcWissen.Models.Demos.Templates.Person>
+﻿@model IEnumerable<_036_MoviesMvcWissen.Models.Demos.Templates.PersonModel>
 
 @{
     ViewBag.Title = "GetPeople";
@@ -7,7 +7,7 @@
 <h2>GetPeople</h2>
 
 <p>
-    @Html.ActionLink("CreatePeople", "Demos")
+    @Html.ActionLink("Add Person", "AddPerson")
 </p>
 <table class="table">
     <tr>
@@ -21,7 +21,7 @@
             @Html.DisplayNameFor(model => model.IdentityNo)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.BirthDate, "Date")
+            @Html.DisplayNameFor(model => model.BirthDate)
         </th>
        
     </tr>
@@ -41,7 +41,7 @@
             @Html.DisplayFor(modelItem => item.BirthDate)
         </td>
         <td>
-            @Html.ActionLink("GetPersonDetails", "GetPersonDetails",new { id=item.Id })
+            @Html.ActionLink("Get Person Details", "GetPersonDetails",new { id=item.Id })
         </td>
 
     </tr>

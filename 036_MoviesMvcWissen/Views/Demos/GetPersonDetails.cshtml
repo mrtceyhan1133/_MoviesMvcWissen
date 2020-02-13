@@ -1,4 +1,4 @@
-﻿@model _036_MoviesMvcWissen.Models.Demos.Templates.Person
+﻿@model _036_MoviesMvcWissen.Models.Demos.Templates.PersonModel
 
 @{
     ViewBag.Title = "GetPersonDetails";
@@ -39,12 +39,13 @@
         </dt>
 
         <dd>
+            @Html.DisplayFor(model => model.BirthDate, "Date")
             @Html.DisplayFor(model => model.BirthDate)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+
     @Html.ActionLink("Back to List", "GetPeople")
 </p>
