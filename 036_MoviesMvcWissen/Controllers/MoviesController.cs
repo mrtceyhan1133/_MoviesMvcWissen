@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace _036_MoviesMvcWissen.Controllers
 {
@@ -54,6 +55,7 @@ namespace _036_MoviesMvcWissen.Controllers
             return View(moviesIndexViewModel);
         }
 
+        [OutputCache(Duration = 60,Location = OutputCacheLocation.ServerAndClient,NoStore =true,VaryByParam = "Name;Min;Max")]
         public ActionResult List(MoviesIndexViewModel moviesIndexViewModel)
         {
             if(moviesIndexViewModel == null)
@@ -89,7 +91,7 @@ namespace _036_MoviesMvcWissen.Controllers
                 }
                 
             }
-            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Min))
+            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Max))
             {
                 double maxValue = 0;
                 if (Double.TryParse(moviesIndexViewModel.Max.Replace(',', '.'), out maxValue))
@@ -244,6 +246,7 @@ namespace _036_MoviesMvcWissen.Controllers
             var model = db.Movies.Find(id.Value);
             return View(model);
         }
+        [ChildActionOnly] //url üzerinden degil sadece htmlactionla ulaşmak için yazıyoruz
         public ActionResult Welcome()
         {
             var result = "Welcome to Movies MVC";

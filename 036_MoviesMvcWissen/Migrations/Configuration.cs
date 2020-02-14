@@ -113,6 +113,11 @@
                     }
                 );
             }
+            context.Users.AddOrUpdate(e => e.UserName, new User()
+            {
+                UserName = "murçik",
+                Password = "113311"
+            });
         }
     }
 }
