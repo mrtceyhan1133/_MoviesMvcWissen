@@ -2,11 +2,21 @@
 
 @{
     ViewBag.Title = "GetPeopleAjax";
+    var ajaxOptions = new AjaxOptions()
+    {
+        AllowCache = false,
+        Url = Url.Action("AddPersonAjax", "Demos"),
+        HttpMethod = "POST",
+        UpdateTargetId = "div_users",
+        InsertionMode = InsertionMode.Replace
+    };
+
 }
 
 <h2>GetPeopleAjax</h2>
 
-@using (Html.BeginForm("AddPersonAjax","Demos",FormMethod.Post))
+@*@using (Html.BeginForm("AddPersonAjax","Demos",FormMethod.Post))*@
+@using (Ajax.BeginForm(ajaxOptions))
 {
     @Html.AntiForgeryToken()
 
@@ -39,7 +49,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.PersonModel.BirthDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.PersonModel.BirthDate,"Date")
+                @Html.EditorFor(model => model.PersonModel.BirthDate, "Date")
             </div>
         </div>
 
@@ -52,6 +62,13 @@
 }
 
 <hr />
-@Html.Partial("_PeopleList",Model.PeopleModel)
+<div id="div_users">
+    @Html.Partial("_PeopleList", Model.PeopleModel)
+</div>
 
+
+@section ajaxScript
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+}
 

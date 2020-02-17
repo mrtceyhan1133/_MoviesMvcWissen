@@ -1,11 +1,13 @@
 ﻿@model DateTime?
 
-<div >
-    @Html.TextBoxFor(model=>model, new { @class="form-control date-picker"})
+<div>
+    @Html.TextBoxFor(model => model, new { @class = "form-control date-picker" })
 </div>
+
 <script type="text/javascript">
-            $(function () {
-                $('.date-picker').datepicker({
-                format: "dd.mm.yyyy"});
-            });
+    $(function () {
+        $('.date-picker').datepicker({
+            format: "dd.mm.yyyy"
+        });
+    });
 </script>
