@@ -20,7 +20,13 @@
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method
             //  to avoid creating duplicate seed data.
-
+           // context.Database.ExecuteSqlCommand("drop view vwUsers");
+            //context.Database.ExecuteSqlCommand("create view vwUsers as select ISNULL(ROW_NUMBER() over(order by u.Id), 0) as Id, u.Id as UserId,UserName, [Password] ,Active,RoleId,r.[Name] from Users u inner join Roles r on u.RoleId=r.Id");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('Movie',RESEED,0)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('Director',RESEED,0)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('Review',RESEED,0)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('Role',RESEED,0)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('User',RESEED,0)");
             List<Movie> movieList = new List<Movie>
             {
                 new Movie { Id = 1, Name = "Avatar", ProductionYear = "2009", BoxOfficeReturn = 1000000.0000,
@@ -86,7 +92,27 @@
                     director.MovieDirectors.Add(movieDirector);
                 }
             }
+            List<Role> roleList = new List<Role>()
+            {
+                new Role(){ Id=1,Name="Admin",Users = new List<User>()},
+                new Role() {Id=2,Name="User",Users = new List<User>()}
+            };
 
+            List<User> userList = new List<User>() {
+                new User() { Id=1,UserName="murçik",Password="113311",Active=true ,RoleId=2},
+                new User() { Id=1,UserName="adminmurçik",Password="113311",Active=true ,RoleId=1}
+
+            };
+
+
+            foreach (var role in roleList)
+            {
+                var users = userList.Where(e => e.RoleId == role.Id).ToList();
+                foreach (var user in users)
+                {
+                    role.Users.Add(user);
+                }
+            }
             // context update:
             foreach (Movie movie in movieList)
             {
@@ -113,11 +139,15 @@
                     }
                 );
             }
-            context.Users.AddOrUpdate(e => e.UserName, new User()
+
+            foreach (var role in roleList)
             {
-                UserName = "murçik",
-                Password = "113311"
-            });
+                context.Roles.AddOrUpdate(e => e.Name, new Role()
+                {
+                    Name = role.Name,
+                    Users = role.Users
+                });
+            }
         }
     }
 }
