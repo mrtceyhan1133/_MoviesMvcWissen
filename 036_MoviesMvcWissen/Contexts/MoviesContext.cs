@@ -29,7 +29,8 @@ namespace _036_MoviesMvcWissen.Contexts
         {
             //modelBuilder.Ignore<vwUser>();
         }
-        
+
+       
     }
     //birden fazla dbcontext varsa alttaki komutlarla contexti belirtmemiz gerekiyo
     //enable-migrations -ContextTypeName _036....

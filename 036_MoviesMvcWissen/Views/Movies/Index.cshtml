@@ -11,6 +11,11 @@
 }
 <br />
 <h3><i>@ViewBag.Title</i></h3>
+
+@Html.ActionLink("Movie Reports","Movies","Reports")
+<br />
+<br />
+
 @using (Html.BeginForm("Index","Movies",FormMethod.Get))
 {
     <table class="table">

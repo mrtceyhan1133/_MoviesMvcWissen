@@ -13,6 +13,12 @@ namespace _036_MoviesMvcWissen
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            //routes.Add("GetReviews", new Route("Reviews", new RouteValueDictionary(new { controller = "Reviews", action = "Index" }), new MvcRouteHandler()));
+            routes.MapRoute(
+                name: "GetReviews",
+                url: "getreviews", 
+                defaults: new { controller = "Reviews", action = "Index", id = UrlParameter.Optional }, 
+                constraints: new { httpMethod = new HttpMethodConstraint("POST", "GET") });
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

@@ -13,6 +13,7 @@ namespace _036_MoviesMvcWissen.Areas.Admin.Controllers
     {
         MoviesContext db = new MoviesContext();
         // GET: Admin/Homr
+        
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
