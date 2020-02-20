@@ -576,6 +576,10 @@
     <Compile Include="Migrations\202002181727234_moviev7.designer.cs">
       <DependentUpon>202002181727234_moviev7.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002201657041_movie9.cs" />
+    <Compile Include="Migrations\202002201657041_movie9.designer.cs">
+      <DependentUpon>202002201657041_movie9.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Demos\Templates\PersonModel.cs" />
     <Compile Include="Models\Demos\Templates\PersonModelClientModel.cs" />
@@ -644,6 +648,7 @@
     <Content Include="Views\Demos\_PeopleList.cshtml" />
     <Content Include="Views\Demos\AddPersonAjaxSil.cshtml" />
     <Content Include="Views\Reports\Movies.cshtml" />
+    <Content Include="Views\Reports\_Movies.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -655,6 +660,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\Homr\" />
+    <Folder Include="Files\Movies\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202002050959369_MoviesV01.resx">
@@ -677,6 +683,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002181727234_moviev7.resx">
       <DependentUpon>202002181727234_moviev7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002201657041_movie9.resx">
+      <DependentUpon>202002201657041_movie9.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

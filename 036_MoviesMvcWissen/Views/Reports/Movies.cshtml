@@ -2,78 +2,42 @@
 
 @{
     ViewBag.Title = "Movies";
+    var ajaxOptions = new AjaxOptions()
+    {
+        AllowCache = false,
+        Url = Url.Action("MoviesAjax", "Reports"),
+        HttpMethod = "GET",
+        UpdateTargetId = "divMovies",
+        InsertionMode = InsertionMode.Replace
+    };
+
 }
 
 <h2>Movies</h2>
-<div class="container">
-    <table class="table">
-        <tr>
-            <th>
+<div class="container" id="divMovies">
+    @*<div> style="width: 100%; overflow-x:auto"</div>*@
+    @Html.Partial("_Movies" , Model)
 
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().MovieName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().MovieProductionYear)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().MovieBoxOfficeReturn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().DirectorFullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().DirectorRetired)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().ReviewContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().ReviewRating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieReports.FirstOrDefault().ReviewReviewer)
-            </th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in Model.MovieReports)
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink("Movie Details", "Details", "Movies", new { id = item.MovieId }, null)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovieName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovieProductionYear)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovieBoxOfficeReturn)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DirectorFullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DirectorRetired)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewContent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewRating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewReviewer)
-                </td>
-            </tr>
-        }
-
-    </table>
 </div>
+@using (Ajax.BeginForm(null, null, ajaxOptions, new { id = "fMovies" }))
+{
+    <div class="row">
+
+        <div class="col-md-10 col-sm-8 col-8"></div>
+        <div class="col-md-2 col-sm-4 col-4">
+            @Html.DropDownList("PageNumber", Model.PageNumbers, new { @class = "form-control ddlPageNumber" })
+        </div>
+
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $(".ddlPageNumber").change(function () {
+            $("#fMovies").submit();
+        });
+    });
+</script>
+@section ajaxScript
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+}

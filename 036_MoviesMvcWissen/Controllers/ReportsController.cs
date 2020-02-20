@@ -16,6 +16,17 @@ namespace _036_MoviesMvcWissen.Controllers
         MoviesContext db = new MoviesContext();
         public ActionResult Movies(ReportsMoviesViewModel reportsMoviesViewModel)
         {
+            GetModel(reportsMoviesViewModel);
+            return View(reportsMoviesViewModel);
+        }
+        public ActionResult MoviesAjax(ReportsMoviesViewModel reportsMoviesViewModel)
+        {
+            GetModel(reportsMoviesViewModel);
+            return PartialView("_Movies" , reportsMoviesViewModel);
+        }
+        
+        private void GetModel(ReportsMoviesViewModel reportsMoviesViewModel)
+        {
             var movieQuery = db.Movies.AsQueryable();
             var directorQuery = db.Directors.AsQueryable();
             var movieDirectorQuery = db.MovieDirectors.AsQueryable();
@@ -64,6 +75,7 @@ namespace _036_MoviesMvcWissen.Controllers
                         };
             var recordCount = query.Count();
             reportsMoviesViewModel.RecordsPerPageCount = Convert.ToInt32(ConfigurationManager.AppSettings["ReportsMoviesRecordsPerPage"]);//web configin altında appsettingde tanımlayıp configurationmanager aracılıgıyla tanımladıgımız degere ulaşabiliyoruz
+            query = query.OrderBy(e => e.MovieName);
             query = query.Skip((reportsMoviesViewModel.PageNumber - 1) * reportsMoviesViewModel.RecordsPerPageCount).Take(reportsMoviesViewModel.RecordsPerPageCount);
             var list = query.ToList().Select(e => new MovieReportModel()
             {
@@ -81,9 +93,22 @@ namespace _036_MoviesMvcWissen.Controllers
 
 
             reportsMoviesViewModel.RecordCount = recordCount;
-            int numberOfPages = reportsMoviesViewModel.RecordCount / reportsMoviesViewModel.RecordsPerPageCount;
-        
-            return View(reportsMoviesViewModel);
+            int numberOfPages = Convert.ToInt32(Math.Ceiling((decimal)reportsMoviesViewModel.RecordCount / (decimal)reportsMoviesViewModel.RecordsPerPageCount));
+            List<SelectListItem> pageList = new List<SelectListItem>();
+            SelectListItem pageItem;
+            for (int i = 1; i <= numberOfPages; i++)
+            {
+                pageItem = new SelectListItem()
+                {
+                    Value = i.ToString(),
+                    Text = i.ToString(),
+
+                };
+                pageList.Add(pageItem);
+            }
+            reportsMoviesViewModel.PageNumbers = new SelectList(pageList, "Value", "Text", reportsMoviesViewModel.PageNumber);
+           
         }
+        
     }
 }

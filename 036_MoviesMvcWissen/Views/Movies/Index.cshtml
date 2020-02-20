@@ -41,7 +41,7 @@
         <td colspan="4" style="color:red; text-align:right;">@ViewData["count"] records found @*@Model.Count Records Found*@</td>
     </tr>
     <tr>
-
+        <td></td>
         <td>
             <b>Name</b>
         </td>
@@ -61,6 +61,9 @@
                 @Html.ActionLink(" ", "Edit", new { id = movie.Id }, new { @class = "fa fa-pencil-square-o text-success" })
                 &nbsp;
                 @Html.ActionLink(" ", "Delete", new { id = movie.Id }, new { @class = "fa fa-trash text-danger" })
+            </td>
+            <td>
+                <img src="../../@movie.FilePath" width="200" height="200" onerror="this.parentElement.innerHTML = '';" />
             </td>
             <td>
                 @movie.Name

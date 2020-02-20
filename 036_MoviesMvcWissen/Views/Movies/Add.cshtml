@@ -8,7 +8,7 @@
 <p style="color: #57a13e">
     @ViewBag.Message
 </p>
-<form action="~/Movies/Add" method="post">
+<form action="~/Movies/Add" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="tbName">Name</label>
         <input type="text" class="form-control" id="tbName" name="Name" />   @*formdaki verileri almak için name propertysini kullanıyoruz*@
@@ -38,6 +38,11 @@
                 <option value="@director.Value">@director.Text</option>
             }
         </select> 
+    </div>
+    <div class="form-group">
+        <label for="fuImage">Image</label>
+        <input type="file" name="Image" multiple accept="image/*" id="fuImage"/>
+
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
     <button type="reset" class="btn btn-warning">Reset</button>

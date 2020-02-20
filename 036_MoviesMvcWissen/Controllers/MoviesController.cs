@@ -4,9 +4,11 @@ using _036_MoviesMvcWissen.Models;
 using _036_MoviesMvcWissen.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -24,14 +26,14 @@ namespace _036_MoviesMvcWissen.Controllers
             //var model = db.Movies.ToList();
             var model = GetList();
             ViewData["count"] = model.Count;
-            
+
             var years = new List<SelectListItem>();
             years.Add(new SelectListItem()
             {
                 Value = "",
                 Text = "-- All --"
             });
-            for (int i = DateTime.Now.Year;i>=1950;i--)
+            for (int i = DateTime.Now.Year; i >= 1950; i--)
             {
                 years.Add(new SelectListItem()
                 {
@@ -39,7 +41,7 @@ namespace _036_MoviesMvcWissen.Controllers
                     Text = i.ToString()
                 });
             }
-            
+
             if (moviesIndexViewModel == null)
             {
                 moviesIndexViewModel = new MoviesIndexViewModel();
@@ -50,28 +52,28 @@ namespace _036_MoviesMvcWissen.Controllers
             {
                 moviesIndexViewModel.Movies = db.Movies.Where(e => e.ProductionYear == moviesIndexViewModel.YearId).ToList();
             }
-            
+
             moviesIndexViewModel.Years = new SelectList(years, "Value", "Text", moviesIndexViewModel.YearId);
             return View(moviesIndexViewModel);
         }
 
-        [OutputCache(Duration = 60,Location = OutputCacheLocation.ServerAndClient,NoStore =true,VaryByParam = "Name;Min;Max")]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.ServerAndClient, NoStore = true, VaryByParam = "Name;Min;Max")]
         public ActionResult List(MoviesIndexViewModel moviesIndexViewModel)
         {
-            if(moviesIndexViewModel == null)
+            if (moviesIndexViewModel == null)
             {
                 moviesIndexViewModel = new MoviesIndexViewModel();
             }
 
             var movies = db.Movies.AsQueryable();
-            if(!String.IsNullOrWhiteSpace(moviesIndexViewModel.Name))
+            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Name))
             {
                 movies = movies.Where(e => e.Name.Contains(moviesIndexViewModel.Name));
             }
 
             moviesIndexViewModel.Movies = movies.ToList();
             var years = new List<SelectListItem>();
-            for(int i = DateTime.Now.Year;i>=2000;i--)
+            for (int i = DateTime.Now.Year; i >= 2000; i--)
             {
                 years.Add(new SelectListItem()
                 {
@@ -82,14 +84,14 @@ namespace _036_MoviesMvcWissen.Controllers
             if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.YearId))
                 movies = movies.Where(e => e.ProductionYear == moviesIndexViewModel.YearId);
 
-            if(!String.IsNullOrWhiteSpace(moviesIndexViewModel.Min))
+            if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Min))
             {
                 double minValue = 0;
-                if(Double.TryParse(moviesIndexViewModel.Min.Replace(',','.'),out minValue))
+                if (Double.TryParse(moviesIndexViewModel.Min.Replace(',', '.'), out minValue))
                 {
                     movies = movies.Where(e => e.BoxOfficeReturn >= minValue);
                 }
-                
+
             }
             if (!String.IsNullOrWhiteSpace(moviesIndexViewModel.Max))
             {
@@ -104,7 +106,7 @@ namespace _036_MoviesMvcWissen.Controllers
 
             moviesIndexViewModel.Movies = movies.ToList();
 
-            moviesIndexViewModel.Years = new SelectList(years, "Value", "Text",moviesIndexViewModel.YearId);
+            moviesIndexViewModel.Years = new SelectList(years, "Value", "Text", moviesIndexViewModel.YearId);
             return View(moviesIndexViewModel);
         }
 
@@ -139,37 +141,53 @@ namespace _036_MoviesMvcWissen.Controllers
             var directors = db.Directors.ToList().Select(e => new SelectListItem() //directors listesini aldık ve listbox da kullanabilmek için multiselectliste çevirdik
             {
                 Value = e.Id.ToString(),
-                Text = e.Name + " " +e.Surname
+                Text = e.Name + " " + e.Surname
             }).ToList();
-            ViewData["directors"] = new MultiSelectList(directors,"Value","Text");
+            ViewData["directors"] = new MultiSelectList(directors, "Value", "Text");
             return View();
             //return new ViewResult();
         }
 
 
         [HttpPost]
-        public RedirectToRouteResult Add(string Name, int ProductionYear, string BoxOfficeReturn,List<int> Directors)
+        public RedirectToRouteResult Add(string Name, int ProductionYear, string BoxOfficeReturn, List<int> Directors, HttpPostedFileBase Image)
         {
-            var entity = new Movie()
+            string filePath = null;
+            if (Image != null && Image.ContentLength > 0)
+            {
+                
+                var fileName = DateTime.Now.Year + DateTime.Now.Month.ToString().PadLeft(2, '0') + DateTime.Now.Day.ToString().PadLeft(2, '0') + DateTime.Now.Hour.ToString().PadLeft(2, '0') + DateTime.Now.Minute.ToString().PadLeft(2, '0') + DateTime.Now.Millisecond.ToString().PadLeft(3, '0') + "_" + Name + Path.GetExtension(Image.FileName);
+                if (Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".jpeg") || Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".png") || Path.GetExtension(fileName).ToLower().Equals(".bmp"))
+                {
+                    filePath = ConfigurationManager.AppSettings["FileFolder"] + "/Movies/" + fileName;
+                }
+            }
+            
+                var entity = new Movie()
             {
                 Name = Name,
                 ProductionYear = ProductionYear.ToString(),
                 BoxOfficeReturn = Convert.ToDouble(BoxOfficeReturn.Replace(",", "."), CultureInfo.InvariantCulture),
                 //MovieDirectors = new List<MovieDirector>()
-            };
+                FilePath=filePath
+        };
             entity.MovieDirectors = Directors.Select(e => new MovieDirector()
             {
-                MovieId=entity.Id,
-                DirectorId=e
+                MovieId = entity.Id,
+                DirectorId = e
             }).ToList();
             db.Movies.Add(entity);
             db.SaveChanges();
+          if(filePath!=null)
+            {
+                Image.SaveAs(Server.MapPath("~/"+filePath));
+            }
             Debug.WriteLine("Added Entity Id: " + entity.Id);
             TempData["Info"] = "Record successfully added to database.";
             return RedirectToAction("Index");
         }
 
-        
+
         public ActionResult Edit(int? id)
         {
             if (!id.HasValue)
@@ -183,35 +201,36 @@ namespace _036_MoviesMvcWissen.Controllers
                 years.Add(year);
             }
             ViewBag.Years = new SelectList(years, "Value", "Text", model.ProductionYear);
-            var directors = db.Directors.Select(e=>new DirectorModel() {
-                Id=e.Id,
-                FullName=e.Name + " " +e.Surname
+            var directors = db.Directors.Select(e => new DirectorModel()
+            {
+                Id = e.Id,
+                FullName = e.Name + " " + e.Surname
             }).ToList();
             var directorIds = model.MovieDirectors.Select(e => e.DirectorId).ToList();
-            
-            ViewBag.directors = new MultiSelectList(directors, "Id", "FullName",directorIds);
+
+            ViewBag.directors = new MultiSelectList(directors, "Id", "FullName", directorIds);
             return View(model);
         }
         [HttpPost]
-       
-        public ActionResult Edit([Bind(Include="Id,Name,ProductionYear")]Movie movie,string BoxOfficeReturn,List<int>directorIds) //public ActionResult Edit(Movie movie,string BoxOfficeReturn) - boxofficereturn virgülle girildigi zaman doublea çeviremedigi için null geliyor, string olarak ayrı alıp controllerda set edebiliriz bu şekilde
+
+        public ActionResult Edit([Bind(Include = "Id,Name,ProductionYear")]Movie movie, string BoxOfficeReturn, List<int> directorIds) //public ActionResult Edit(Movie movie,string BoxOfficeReturn) - boxofficereturn virgülle girildigi zaman doublea çeviremedigi için null geliyor, string olarak ayrı alıp controllerda set edebiliriz bu şekilde
         {
             var entity = db.Movies.SingleOrDefault(e => e.Id == movie.Id);
             entity.Name = movie.Name;
             entity.ProductionYear = movie.ProductionYear;
-            entity.BoxOfficeReturn = Convert.ToDouble(BoxOfficeReturn.Replace(",","."),CultureInfo.InvariantCulture);
+            entity.BoxOfficeReturn = Convert.ToDouble(BoxOfficeReturn.Replace(",", "."), CultureInfo.InvariantCulture);
             entity.MovieDirectors = new List<MovieDirector>();
-            var movieDirectors = db.MovieDirectors.Where(e => e.MovieId== movie.Id);
-            foreach(var movieDirector in movieDirectors)
+            var movieDirectors = db.MovieDirectors.Where(e => e.MovieId == movie.Id);
+            foreach (var movieDirector in movieDirectors)
             {
                 db.MovieDirectors.Remove(movieDirector); // movienin yönetmenlerini sildik ara tabloyu bu moviele alakalı verileri boşalttık
             }
             foreach (var directorId in directorIds) // elimizdeki editlenecek yönetmenlerin idlerine göre her biri için movie director newleyerek entitymize ekleyip sonrasında entityi veritabanında güncelledik
             {
-                var movieDirector = new MovieDirector() 
+                var movieDirector = new MovieDirector()
                 {
                     MovieId = movie.Id,
-                    DirectorId=directorId
+                    DirectorId = directorId
                 };
                 entity.MovieDirectors.Add(movieDirector);
             }
@@ -251,7 +270,7 @@ namespace _036_MoviesMvcWissen.Controllers
         {
             var result = "Welcome to Movies MVC";
             //return Content(result);
-            return PartialView("_Welcome",result);
+            return PartialView("_Welcome", result);
         }
     }
 }
