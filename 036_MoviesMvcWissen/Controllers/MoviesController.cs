@@ -147,21 +147,36 @@ namespace _036_MoviesMvcWissen.Controllers
             return View();
             //return new ViewResult();
         }
-
-
-        [HttpPost]
-        public RedirectToRouteResult Add(string Name, int ProductionYear, string BoxOfficeReturn, List<int> Directors, HttpPostedFileBase Image)
+        private string CreateFilePath(HttpPostedFileBase Image,string Name)
         {
             string filePath = null;
             if (Image != null && Image.ContentLength > 0)
             {
-                
+
                 var fileName = DateTime.Now.Year + DateTime.Now.Month.ToString().PadLeft(2, '0') + DateTime.Now.Day.ToString().PadLeft(2, '0') + DateTime.Now.Hour.ToString().PadLeft(2, '0') + DateTime.Now.Minute.ToString().PadLeft(2, '0') + DateTime.Now.Millisecond.ToString().PadLeft(3, '0') + "_" + Name + Path.GetExtension(Image.FileName);
                 if (Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".jpeg") || Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".png") || Path.GetExtension(fileName).ToLower().Equals(".bmp"))
                 {
                     filePath = ConfigurationManager.AppSettings["FileFolder"] + "/Movies/" + fileName;
                 }
             }
+            return filePath;
+
+        }
+
+        [HttpPost]
+        public RedirectToRouteResult Add(string Name, int ProductionYear, string BoxOfficeReturn, List<int> Directors, HttpPostedFileBase Image)
+        {
+            string filePath = CreateFilePath(Image,Name);
+            //if (Image != null && Image.ContentLength > 0)
+            //{
+
+            //    var fileName = DateTime.Now.Year + DateTime.Now.Month.ToString().PadLeft(2, '0') + DateTime.Now.Day.ToString().PadLeft(2, '0') + DateTime.Now.Hour.ToString().PadLeft(2, '0') + DateTime.Now.Minute.ToString().PadLeft(2, '0') + DateTime.Now.Millisecond.ToString().PadLeft(3, '0') + "_" + Name + Path.GetExtension(Image.FileName);
+            //    if (Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".jpeg") || Path.GetExtension(fileName).ToLower().Equals(".jpg") || Path.GetExtension(fileName).ToLower().Equals(".png") || Path.GetExtension(fileName).ToLower().Equals(".bmp"))
+            //    {
+            //        filePath = ConfigurationManager.AppSettings["FileFolder"] + "/Movies/" + fileName;
+            //    }
+            //}
+            
             
                 var entity = new Movie()
             {
@@ -213,13 +228,19 @@ namespace _036_MoviesMvcWissen.Controllers
         }
         [HttpPost]
 
-        public ActionResult Edit([Bind(Include = "Id,Name,ProductionYear")]Movie movie, string BoxOfficeReturn, List<int> directorIds) //public ActionResult Edit(Movie movie,string BoxOfficeReturn) - boxofficereturn virgülle girildigi zaman doublea çeviremedigi için null geliyor, string olarak ayrı alıp controllerda set edebiliriz bu şekilde
+        public ActionResult Edit([Bind(Include = "Id,Name,ProductionYear")]Movie movie, string BoxOfficeReturn, List<int> directorIds,HttpPostedFileBase Image) //public ActionResult Edit(Movie movie,string BoxOfficeReturn) - boxofficereturn virgülle girildigi zaman doublea çeviremedigi için null geliyor, string olarak ayrı alıp controllerda set edebiliriz bu şekilde
         {
+            string filePath = CreateFilePath(Image, movie.Name);
             var entity = db.Movies.SingleOrDefault(e => e.Id == movie.Id);
+            string oldFilePath = entity.FilePath;
             entity.Name = movie.Name;
             entity.ProductionYear = movie.ProductionYear;
             entity.BoxOfficeReturn = Convert.ToDouble(BoxOfficeReturn.Replace(",", "."), CultureInfo.InvariantCulture);
             entity.MovieDirectors = new List<MovieDirector>();
+            if(Image!=null && Image.ContentLength>0)
+            { 
+            entity.FilePath = filePath;
+            }
             var movieDirectors = db.MovieDirectors.Where(e => e.MovieId == movie.Id);
             foreach (var movieDirector in movieDirectors)
             {
@@ -236,6 +257,18 @@ namespace _036_MoviesMvcWissen.Controllers
             }
             db.Entry(entity).State = EntityState.Modified;
             db.SaveChanges();
+            if(filePath != null)
+            {
+                if(!String.IsNullOrWhiteSpace(oldFilePath))
+                {
+                    if(System.IO.File.Exists(Server.MapPath("~/" + oldFilePath)))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+
+                }
+                Image.SaveAs(Server.MapPath("~/" + filePath));
+            }
             TempData["Info"] = "Record successfully updated in database.";
             return RedirectToRoute(new { controller = "Movies", action = "Index" });
 
@@ -255,6 +288,10 @@ namespace _036_MoviesMvcWissen.Controllers
             var entity = db.Movies.Find(id);
             db.Movies.Remove(entity);
             db.SaveChanges();
+            if(entity.FilePath!= null && System.IO.File.Exists(Server.MapPath("~/" + entity.FilePath)))
+            {
+                System.IO.File.Delete(Server.MapPath("~/" + entity.FilePath));
+            }
             TempData["Info"] = "Record successfully deleted from database.";
             return RedirectToAction("Index");
         }

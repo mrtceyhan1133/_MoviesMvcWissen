@@ -1,7 +1,9 @@
 ﻿@model Movie
-
+    
 @{ 
     var movieDirectors = Model.MovieDirectors;
+    var x = Model;
+    var reviews = Model.Reviews;
     var directorFullNames = "";
 
     foreach (var movieDirector in movieDirectors)

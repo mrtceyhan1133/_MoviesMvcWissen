@@ -27,7 +27,14 @@
         <dd>
             @Html.DisplayFor(model => model.BoxOfficeReturn)
         </dd>
-
+        
+            <dd> @{
+                if(Model.FilePath != null)
+                {
+                    <img src="/@Url.Content(Model.FilePath)" title="@Model.Name" alt="@Model.Name" class="img-fluid" style="max-width:50% !important" />
+                }
+            }</dd>
+        
     </dl>
 </div>
 <p>

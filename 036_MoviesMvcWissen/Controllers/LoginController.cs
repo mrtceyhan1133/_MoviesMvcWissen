@@ -15,6 +15,7 @@ namespace _036_MoviesMvcWissen.Controllers
         // GET: Login
         public ActionResult Index()
         {
+            var x = db.Movies.ToList();
             return View();
         }
         [HttpPost]
